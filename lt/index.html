@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Học Thuật Toán</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f0f1a;--surface:#1a1a2e;--surface2:#16213e;--accent:#0f3460;--primary:#e94560;--primary-light:#ff6b81;--text:#e0e0e0;--text-muted:#8892b0;--green:#00d2d3;--gold:#feca57;--code-bg:#0d1117;--radius:12px;--shadow:0 8px 32px rgba(0,0,0,.4)}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.header{background:linear-gradient(135deg,#0f3460,#16213e,#1a1a2e);padding:20px 30px;display:flex;align-items:center;gap:15px;border-bottom:2px solid var(--primary);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.header .logo{font-size:2rem}
+.header h1{font-size:1.6rem;font-weight:800;background:linear-gradient(90deg,var(--primary),var(--gold),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{font-size:.85rem;color:var(--text-muted)}
+.container{display:flex;min-height:calc(100vh - 80px)}
+.sidebar{width:280px;min-width:280px;background:var(--surface);padding:20px 15px;border-right:1px solid rgba(255,255,255,.05);overflow-y:auto}
+.sidebar h2{font-size:.8rem;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:15px;padding-left:10px}
+.nav-btn{width:100%;padding:14px 18px;margin-bottom:8px;background:transparent;border:1px solid rgba(255,255,255,.05);border-radius:var(--radius);color:var(--text);font-size:.95rem;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;transition:all .3s;font-family:'Inter',sans-serif}
+.nav-btn:hover{background:rgba(233,69,96,.1);border-color:var(--primary);transform:translateX(5px)}
+.nav-btn.active{background:linear-gradient(135deg,rgba(233,69,96,.2),rgba(15,52,96,.3));border-color:var(--primary);box-shadow:0 0 20px rgba(233,69,96,.15)}
+.nav-btn .icon{font-size:1.4rem}
+.nav-btn .label{font-weight:600}
+.nav-btn .desc{font-size:.75rem;color:var(--text-muted);display:block}
+.main{flex:1;padding:30px;overflow-y:auto;max-height:calc(100vh - 80px)}
+.section{display:none;animation:fadeIn .5s ease}.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--surface);border-radius:var(--radius);padding:25px;margin-bottom:20px;border:1px solid rgba(255,255,255,.05);transition:all .3s}
+.card:hover{border-color:rgba(233,69,96,.2);box-shadow:var(--shadow)}
+.card h2{font-size:1.4rem;margin-bottom:15px;display:flex;align-items:center;gap:10px;color:var(--primary-light)}
+.card h3{font-size:1.1rem;margin:15px 0 10px;color:var(--green)}
+.card p,.card li{line-height:1.8;color:var(--text-muted);font-size:.95rem}
+.card ul{padding-left:20px;margin:10px 0}
+.card li{margin-bottom:5px}
+.formula{background:var(--code-bg);border:1px solid rgba(0,210,211,.2);border-radius:8px;padding:15px 20px;margin:15px 0;font-family:'Courier New',monospace;color:var(--gold);font-size:1rem;text-align:center}
+pre{background:var(--code-bg);border-radius:8px;padding:20px;margin:15px 0;overflow-x:auto;border:1px solid rgba(255,255,255,.08);font-size:.88rem;line-height:1.6;color:#c9d1d9}
+.kw{color:#ff7b72}.str{color:#a5d6ff}.cmt{color:#8b949e;font-style:italic}.fn{color:#d2a8ff}.num{color:#79c0ff}
+.interactive{background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid rgba(0,210,211,.15);border-radius:var(--radius);padding:25px;margin-top:20px}
+.interactive h3{color:var(--green);margin-bottom:15px;font-size:1.1rem}
+.input-group{display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap;align-items:end}
+.input-group label{display:block;font-size:.85rem;color:var(--text-muted);margin-bottom:5px}
+.input-group input{padding:10px 15px;background:var(--code-bg);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text);font-size:.9rem;font-family:'Inter',sans-serif;min-width:200px}
+.input-group input:focus{outline:none;border-color:var(--primary)}
+.run-btn{padding:10px 25px;background:linear-gradient(135deg,var(--primary),#c0392b);border:none;border-radius:8px;color:#fff;font-weight:600;cursor:pointer;font-size:.9rem;transition:all .3s;font-family:'Inter',sans-serif}
+.run-btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(233,69,96,.4)}
+.output{background:var(--code-bg);border-radius:8px;padding:20px;margin-top:15px;min-height:60px;border:1px solid rgba(255,255,255,.08);font-family:'Courier New',monospace;white-space:pre-wrap;color:var(--green);font-size:.9rem;line-height:1.6}
+.algo-select{display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap}
+.algo-tag{padding:8px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;cursor:pointer;font-size:.85rem;transition:all .3s;color:var(--text-muted);font-family:'Inter',sans-serif}
+.algo-tag:hover,.algo-tag.active{background:rgba(233,69,96,.15);border-color:var(--primary);color:var(--primary-light)}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:600;margin-right:5px}
+.badge-red{background:rgba(233,69,96,.2);color:var(--primary-light)}
+.badge-green{background:rgba(0,210,211,.2);color:var(--green)}
+.badge-gold{background:rgba(254,202,87,.2);color:var(--gold)}
+.welcome{text-align:center;padding:60px 20px}
+.welcome h2{font-size:2.2rem;margin-bottom:15px;background:linear-gradient(90deg,var(--primary),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.welcome p{color:var(--text-muted);font-size:1.1rem;max-width:600px;margin:0 auto 30px}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-top:30px}
+.feature-card{background:var(--surface);border-radius:var(--radius);padding:25px;border:1px solid rgba(255,255,255,.05);transition:all .3s;cursor:pointer}
+.feature-card:hover{transform:translateY(-5px);border-color:var(--primary);box-shadow:var(--shadow)}
+.feature-card .f-icon{font-size:2.5rem;margin-bottom:10px}
+.feature-card h3{font-size:1rem;margin-bottom:8px;color:var(--text)}
+.feature-card p{font-size:.85rem;color:var(--text-muted)}
+.step-list{counter-reset:step;list-style:none;padding:0}
+.step-list li{counter-increment:step;padding:10px 10px 10px 50px;position:relative;margin-bottom:8px;background:rgba(255,255,255,.02);border-radius:8px}
+.step-list li::before{content:counter(step);position:absolute;left:12px;top:12px;width:28px;height:28px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff}
+.hint{font-size:.8rem;color:var(--text-muted);margin-top:5px}
+@media(max-width:768px){.sidebar{width:100%;min-width:100%;border-right:none;border-bottom:1px solid rgba(255,255,255,.05);padding:10px;display:flex;gap:8px;overflow-x:auto}.container{flex-direction:column}.nav-btn{min-width:150px}.main{max-height:none;padding:15px}.header h1{font-size:1.2rem}.nav-btn .desc{display:none}}
+</style>
+</head>
+<body>
+<div class="header">
+<span class="logo">🧠</span>
+<div><h1>Website Học Thuật Toán</h1><p>Kỹ thuật lập trình nâng cao — 4 kỹ thuật cốt lõi</p></div>
+</div>
+<div class="container">
+<nav class="sidebar">
+<h2>📚 Kỹ thuật</h2>
+<button class="nav-btn active" onclick="show('welcome')"><span class="icon">🏠</span><div><span class="label">Trang chủ</span><span class="desc">Tổng quan</span></div></button>
+<button class="nav-btn" onclick="show('recursion')"><span class="icon">🔄</span><div><span class="label">Đệ quy</span><span class="desc">Recursion</span></div></button>
+<button class="nav-btn" onclick="show('dnc')"><span class="icon">✂️</span><div><span class="label">Chia để trị</span><span class="desc">Divide & Conquer</span></div></button>
+<button class="nav-btn" onclick="show('dp')"><span class="icon">📊</span><div><span class="label">Quy hoạch động</span><span class="desc">Dynamic Programming</span></div></button>
+<button class="nav-btn" onclick="show('greedy')"><span class="icon">💰</span><div><span class="label">Tham lam</span><span class="desc">Greedy Algorithm</span></div></button>
+</nav>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ===================== NỘI DUNG CÁC TRANG =====================
+const DATA = {};
+
+// --- TRANG CHỦ ---
+DATA.welcome = `
+<div class="welcome">
+<h2>🎓 Chào mừng đến với Website Học Thuật Toán</h2>
+<p>Tìm hiểu 4 kỹ thuật thuật toán quan trọng nhất trong môn Kỹ thuật lập trình nâng cao, kèm lý thuyết, code minh họa và chạy thử trực tiếp trên trình duyệt.</p>
+<div class="feature-grid">
+<div class="feature-card" onclick="show('recursion')"><div class="f-icon">🔄</div><h3>Đệ quy</h3><p>Hàm gọi lại chính nó. Giai thừa, Fibonacci, Tháp Hà Nội.</p></div>
+<div class="feature-card" onclick="show('dnc')"><div class="f-icon">✂️</div><h3>Chia để trị</h3><p>Chia nhỏ bài toán. Binary Search, Merge Sort, Quick Sort.</p></div>
+<div class="feature-card" onclick="show('dp')"><div class="f-icon">📊</div><h3>Quy hoạch động</h3><p>Lưu kết quả bài toán con. Knapsack, LCS, Fibonacci DP.</p></div>
+<div class="feature-card" onclick="show('greedy')"><div class="f-icon">💰</div><h3>Tham lam</h3><p>Chọn tối ưu tại mỗi bước. Đổi tiền, Chọn hoạt động.</p></div>
+</div></div>`;
+
+// --- ĐỆ QUY ---
+DATA.recursion = `
+<div class="card"><h2>🔄 Đệ quy (Recursion)</h2>
+<h3>📖 Giới thiệu</h3>
+<p><b>Đệ quy</b> là kỹ thuật trong đó một hàm <b>gọi lại chính nó</b> để giải quyết bài toán. Bài toán lớn được chia thành các bài toán nhỏ hơn có <b>cùng cấu trúc</b> cho đến khi đạt <b>điều kiện dừng</b> (base case).</p>
+<h3>⚙️ Nguyên lý hoạt động</h3>
+<ol class="step-list">
+<li>Xác định <b>điều kiện dừng</b> (base case) — trường hợp đơn giản nhất, không cần gọi đệ quy.</li>
+<li>Xác định <b>bước đệ quy</b> — gọi lại hàm với đầu vào nhỏ hơn.</li>
+<li>Đảm bảo mỗi lần gọi tiến gần hơn đến điều kiện dừng để tránh vòng lặp vô hạn.</li>
+</ol>
+<h3>📐 Công thức</h3>
+<div class="formula">Giai thừa: n! = n × (n-1)! &emsp;|&emsp; 0! = 1</div>
+<div class="formula">Fibonacci: F(n) = F(n-1) + F(n-2) &emsp;|&emsp; F(0)=0, F(1)=1</div>
+<h3>📋 Các thuật toán tiêu biểu</h3>
+<ul>
+<li><span class="badge badge-red">Cơ bản</span> Tính giai thừa (Factorial)</li>
+<li><span class="badge badge-red">Cơ bản</span> Dãy Fibonacci</li>
+<li><span class="badge badge-gold">Trung bình</span> Tháp Hà Nội (Tower of Hanoi)</li>
+<li><span class="badge badge-green">Nâng cao</span> Duyệt cây (Tree Traversal)</li>
+</ul></div>
+<div class="card"><h2>💻 Code minh họa</h2>
+<h3>1. Giai thừa</h3>
+<pre><span class="cmt">// Tính n! bằng đệ quy</span>
+<span class="kw">function</span> <span class="fn">factorial</span>(n) {
+  <span class="kw">if</span> (n === <span class="num">0</span>) <span class="kw">return</span> <span class="num">1</span>;  <span class="cmt">// Điều kiện dừng</span>
+  <span class="kw">return</span> n * <span class="fn">factorial</span>(n - <span class="num">1</span>); <span class="cmt">// Bước đệ quy</span>
+}
+<span class="cmt">// Ví dụ: factorial(5) = 5×4×3×2×1 = 120</span></pre>
+<h3>2. Fibonacci</h3>
+<pre><span class="cmt">// Tính số Fibonacci thứ n</span>
+<span class="kw">function</span> <span class="fn">fibonacci</span>(n) {
+  <span class="kw">if</span> (n &lt;= <span class="num">1</span>) <span class="kw">return</span> n;
+  <span class="kw">return</span> <span class="fn">fibonacci</span>(n-<span class="num">1</span>) + <span class="fn">fibonacci</span>(n-<span class="num">2</span>);
+}</pre>
+<h3>3. Tháp Hà Nội</h3>
+<pre><span class="kw">function</span> <span class="fn">hanoi</span>(n, from, to, aux) {
+  <span class="kw">if</span> (n === <span class="num">1</span>) <span class="kw">return</span> <span class="str">"Di chuyển đĩa 1: "</span>+from+<span class="str">" → "</span>+to+<span class="str">"\\n"</span>;
+  <span class="kw">let</span> s = <span class="fn">hanoi</span>(n-<span class="num">1</span>, from, aux, to);
+  s += <span class="str">"Di chuyển đĩa "</span>+n+<span class="str">": "</span>+from+<span class="str">" → "</span>+to+<span class="str">"\\n"</span>;
+  s += <span class="fn">hanoi</span>(n-<span class="num">1</span>, aux, to, from);
+  <span class="kw">return</span> s;
+}</pre></div>
+<div class="interactive"><h3>🚀 Chạy thử Đệ quy</h3>
+<div class="algo-select">
+<span class="algo-tag active" onclick="selAlgo(this,'rec','factorial')">Giai thừa</span>
+<span class="algo-tag" onclick="selAlgo(this,'rec','fibonacci')">Fibonacci</span>
+<span class="algo-tag" onclick="selAlgo(this,'rec','hanoi')">Tháp Hà Nội</span>
+</div>
+<div class="input-group"><div><label id="rec-label">Nhập số n (0-20):</label><input id="rec-input" type="number" value="5" min="0" max="20"></div>
+<button class="run-btn" onclick="runRec()">▶ Chạy ví dụ</button></div>
+<div class="output" id="rec-output">Nhấn "Chạy ví dụ" để xem kết quả...</div></div>`;
+
+// --- CHIA ĐỂ TRỊ ---
+DATA.dnc = `
+<div class="card"><h2>✂️ Chia để trị (Divide and Conquer)</h2>
+<h3>📖 Giới thiệu</h3>
+<p><b>Chia để trị</b> là kỹ thuật chia bài toán lớn thành <b>các bài toán con nhỏ hơn</b>, giải quyết đệ quy từng bài toán con, rồi <b>kết hợp</b> kết quả lại thành lời giải cho bài toán ban đầu.</p>
+<h3>⚙️ Nguyên lý hoạt động</h3>
+<ol class="step-list">
+<li><b>Chia (Divide)</b>: Chia bài toán thành các bài toán con nhỏ hơn cùng dạng.</li>
+<li><b>Trị (Conquer)</b>: Giải quyết đệ quy từng bài toán con. Nếu đủ nhỏ, giải trực tiếp.</li>
+<li><b>Kết hợp (Combine)</b>: Gộp kết quả các bài toán con thành kết quả bài toán gốc.</li>
+</ol>
+<h3>📐 Công thức (Master Theorem)</h3>
+<div class="formula">T(n) = aT(n/b) + f(n)</div>
+<p>Trong đó: <b>a</b> = số bài toán con, <b>b</b> = tỉ lệ chia, <b>f(n)</b> = chi phí kết hợp.</p>
+<h3>📋 Các thuật toán tiêu biểu</h3>
+<ul>
+<li><span class="badge badge-red">Cơ bản</span> Tìm kiếm nhị phân (Binary Search) — O(log n)</li>
+<li><span class="badge badge-gold">Trung bình</span> Sắp xếp trộn (Merge Sort) — O(n log n)</li>
+<li><span class="badge badge-gold">Trung bình</span> Sắp xếp nhanh (Quick Sort) — O(n log n) trung bình</li>
+</ul></div>
+<div class="card"><h2>💻 Code minh họa</h2>
+<h3>1. Binary Search</h3>
+<pre><span class="kw">function</span> <span class="fn">binarySearch</span>(arr, target, lo=<span class="num">0</span>, hi=arr.length-<span class="num">1</span>) {
+  <span class="kw">if</span> (lo > hi) <span class="kw">return</span> -<span class="num">1</span>; <span class="cmt">// Không tìm thấy</span>
+  <span class="kw">let</span> mid = Math.floor((lo+hi)/<span class="num">2</span>);
+  <span class="kw">if</span> (arr[mid] === target) <span class="kw">return</span> mid;
+  <span class="kw">if</span> (arr[mid] &lt; target) <span class="kw">return</span> <span class="fn">binarySearch</span>(arr,target,mid+<span class="num">1</span>,hi);
+  <span class="kw">return</span> <span class="fn">binarySearch</span>(arr,target,lo,mid-<span class="num">1</span>);
+}</pre>
+<h3>2. Merge Sort</h3>
+<pre><span class="kw">function</span> <span class="fn">mergeSort</span>(arr) {
+  <span class="kw">if</span> (arr.length &lt;= <span class="num">1</span>) <span class="kw">return</span> arr;
+  <span class="kw">let</span> mid = Math.floor(arr.length/<span class="num">2</span>);
+  <span class="kw">let</span> L = <span class="fn">mergeSort</span>(arr.slice(<span class="num">0</span>,mid));
+  <span class="kw">let</span> R = <span class="fn">mergeSort</span>(arr.slice(mid));
+  <span class="kw">return</span> <span class="fn">merge</span>(L, R);
+}
+<span class="kw">function</span> <span class="fn">merge</span>(L, R) {
+  <span class="kw">let</span> res=[], i=<span class="num">0</span>, j=<span class="num">0</span>;
+  <span class="kw">while</span>(i&lt;L.length && j&lt;R.length)
+    res.push(L[i]&lt;R[j] ? L[i++] : R[j++]);
+  <span class="kw">return</span> res.concat(L.slice(i)).concat(R.slice(j));
+}</pre>
+<h3>3. Quick Sort</h3>
+<pre><span class="kw">function</span> <span class="fn">quickSort</span>(arr) {
+  <span class="kw">if</span> (arr.length &lt;= <span class="num">1</span>) <span class="kw">return</span> arr;
+  <span class="kw">let</span> pivot = arr[arr.length-<span class="num">1</span>];
+  <span class="kw">let</span> left=[], right=[];
+  <span class="kw">for</span>(<span class="kw">let</span> i=<span class="num">0</span>;i&lt;arr.length-<span class="num">1</span>;i++)
+    arr[i]&lt;pivot ? left.push(arr[i]) : right.push(arr[i]);
+  <span class="kw">return</span> [...<span class="fn">quickSort</span>(left), pivot, ...<span class="fn">quickSort</span>(right)];
+}</pre></div>
+<div class="interactive"><h3>🚀 Chạy thử Chia để trị</h3>
+<div class="algo-select">
+<span class="algo-tag active" onclick="selAlgo(this,'dnc','bsearch')">Binary Search</span>
+<span class="algo-tag" onclick="selAlgo(this,'dnc','msort')">Merge Sort</span>
+<span class="algo-tag" onclick="selAlgo(this,'dnc','qsort')">Quick Sort</span>
+</div>
+<div class="input-group"><div><label id="dnc-label">Mảng và giá trị tìm (vd: 1,3,5,7,9;7):</label><input id="dnc-input" value="1,3,5,7,9;7" style="min-width:280px"></div>
+<button class="run-btn" onclick="runDnc()">▶ Chạy ví dụ</button></div>
+<p class="hint">Binary Search: "1,3,5,7,9;7" | Merge/Quick Sort: "5,3,1,8,2"</p>
+<div class="output" id="dnc-output">Nhấn "Chạy ví dụ" để xem kết quả...</div></div>`;
+
+// --- QUY HOẠCH ĐỘNG ---
+DATA.dp = `
+<div class="card"><h2>📊 Quy hoạch động (Dynamic Programming)</h2>
+<h3>📖 Giới thiệu</h3>
+<p><b>Quy hoạch động (DP)</b> là kỹ thuật giải bài toán bằng cách chia thành <b>bài toán con chồng chéo</b>, lưu kết quả để <b>tránh tính lại</b>. Có 2 cách: <b>Top-down</b> (ghi nhớ - memoization) và <b>Bottom-up</b> (bảng phương - tabulation).</p>
+<h3>⚙️ Nguyên lý hoạt động</h3>
+<ol class="step-list">
+<li><b>Xác định bài toán con</b>: Định nghĩa trạng thái dp[i].</li>
+<li><b>Tìm công thức truy hồi</b>: Mối quan hệ giữa các trạng thái.</li>
+<li><b>Xác định base case</b>: Giá trị khởi tạo ban đầu.</li>
+<li><b>Tính toán và lưu trữ</b>: Dùng mảng/bảng lưu kết quả đã tính.</li>
+</ol>
+<h3>📐 Công thức</h3>
+<div class="formula">Fibonacci DP: dp[i] = dp[i-1] + dp[i-2]</div>
+<div class="formula">Knapsack 0/1: dp[i][w] = max(dp[i-1][w], dp[i-1][w-wt[i]] + val[i])</div>
+<div class="formula">LCS: nếu a[i]==b[j] thì dp[i][j]=dp[i-1][j-1]+1, ngược lại max(dp[i-1][j], dp[i][j-1])</div>
+<h3>📋 Các thuật toán tiêu biểu</h3>
+<ul>
+<li><span class="badge badge-red">Cơ bản</span> Fibonacci bằng DP</li>
+<li><span class="badge badge-gold">Trung bình</span> Bài toán cái túi (Knapsack 0/1)</li>
+<li><span class="badge badge-gold">Trung bình</span> Dãy con chung dài nhất (LCS)</li>
+</ul></div>
+<div class="card"><h2>💻 Code minh họa</h2>
+<h3>1. Fibonacci (Bottom-up)</h3>
+<pre><span class="kw">function</span> <span class="fn">fibDP</span>(n) {
+  <span class="kw">let</span> dp = [<span class="num">0</span>, <span class="num">1</span>];
+  <span class="kw">for</span>(<span class="kw">let</span> i=<span class="num">2</span>; i&lt;=n; i++)
+    dp[i] = dp[i-<span class="num">1</span>] + dp[i-<span class="num">2</span>];
+  <span class="kw">return</span> dp[n];
+}</pre>
+<h3>2. Knapsack 0/1</h3>
+<pre><span class="kw">function</span> <span class="fn">knapsack</span>(W, wt, val, n) {
+  <span class="kw">let</span> dp = Array.from({length:n+<span class="num">1</span>}, ()=>Array(W+<span class="num">1</span>).fill(<span class="num">0</span>));
+  <span class="kw">for</span>(<span class="kw">let</span> i=<span class="num">1</span>; i&lt;=n; i++)
+    <span class="kw">for</span>(<span class="kw">let</span> w=<span class="num">0</span>; w&lt;=W; w++) {
+      dp[i][w] = dp[i-<span class="num">1</span>][w];
+      <span class="kw">if</span>(wt[i-<span class="num">1</span>]&lt;=w)
+        dp[i][w] = Math.max(dp[i][w], dp[i-<span class="num">1</span>][w-wt[i-<span class="num">1</span>]]+val[i-<span class="num">1</span>]);
+    }
+  <span class="kw">return</span> dp[n][W];
+}</pre>
+<h3>3. LCS</h3>
+<pre><span class="kw">function</span> <span class="fn">lcs</span>(a, b) {
+  <span class="kw">let</span> m=a.length, n=b.length;
+  <span class="kw">let</span> dp = Array.from({length:m+<span class="num">1</span>}, ()=>Array(n+<span class="num">1</span>).fill(<span class="num">0</span>));
+  <span class="kw">for</span>(<span class="kw">let</span> i=<span class="num">1</span>; i&lt;=m; i++)
+    <span class="kw">for</span>(<span class="kw">let</span> j=<span class="num">1</span>; j&lt;=n; j++)
+      dp[i][j] = a[i-<span class="num">1</span>]===b[j-<span class="num">1</span>]
+        ? dp[i-<span class="num">1</span>][j-<span class="num">1</span>]+<span class="num">1</span>
+        : Math.max(dp[i-<span class="num">1</span>][j], dp[i][j-<span class="num">1</span>]);
+  <span class="kw">return</span> dp[m][n];
+}</pre></div>
+<div class="interactive"><h3>🚀 Chạy thử Quy hoạch động</h3>
+<div class="algo-select">
+<span class="algo-tag active" onclick="selAlgo(this,'dp','fibdp')">Fibonacci DP</span>
+<span class="algo-tag" onclick="selAlgo(this,'dp','knapsack')">Knapsack</span>
+<span class="algo-tag" onclick="selAlgo(this,'dp','lcs')">LCS</span>
+</div>
+<div class="input-group"><div><label id="dp-label">Nhập n:</label><input id="dp-input" value="10"></div>
+<button class="run-btn" onclick="runDp()">▶ Chạy ví dụ</button></div>
+<p class="hint">Fibonacci: "10" | Knapsack: "10;2,3,4,5;3,4,5,6" (W;trọng lượng;giá trị) | LCS: "ABCBDAB;BDCAB"</p>
+<div class="output" id="dp-output">Nhấn "Chạy ví dụ" để xem kết quả...</div></div>`;
+
+// --- THAM LAM ---
+DATA.greedy = `
+<div class="card"><h2>💰 Thuật toán tham lam (Greedy)</h2>
+<h3>📖 Giới thiệu</h3>
+<p><b>Thuật toán tham lam</b> luôn chọn <b>phương án tối ưu cục bộ</b> tại mỗi bước, với hy vọng đạt được <b>tối ưu toàn cục</b>. Không phải lúc nào cũng cho kết quả tối ưu, nhưng thường rất nhanh và hiệu quả cho nhiều bài toán.</p>
+<h3>⚙️ Nguyên lý hoạt động</h3>
+<ol class="step-list">
+<li>Tại mỗi bước, chọn phương án <b>tốt nhất hiện tại</b> (tham lam).</li>
+<li>Không quay lại thay đổi lựa chọn trước đó.</li>
+<li>Lặp lại cho đến khi giải xong bài toán.</li>
+</ol>
+<h3>📐 Đặc điểm</h3>
+<div class="formula">Tính chất: Lựa chọn tối ưu cục bộ → Kỳ vọng tối ưu toàn cục</div>
+<div class="formula">Độ phức tạp thường: O(n log n) do cần sắp xếp</div>
+<h3>📋 Các thuật toán tiêu biểu</h3>
+<ul>
+<li><span class="badge badge-red">Cơ bản</span> Bài toán đổi tiền (Coin Change)</li>
+<li><span class="badge badge-gold">Trung bình</span> Chọn hoạt động (Activity Selection)</li>
+<li><span class="badge badge-green">Nâng cao</span> Thuật toán Dijkstra</li>
+<li><span class="badge badge-green">Nâng cao</span> Thuật toán Kruskal / Prim</li>
+</ul></div>
+<div class="card"><h2>💻 Code minh họa</h2>
+<h3>1. Đổi tiền</h3>
+<pre><span class="kw">function</span> <span class="fn">coinChange</span>(coins, amount) {
+  coins.sort((a,b) => b-a); <span class="cmt">// Sắp giảm dần</span>
+  <span class="kw">let</span> result=[], remaining=amount;
+  <span class="kw">for</span>(<span class="kw">let</span> c <span class="kw">of</span> coins) {
+    <span class="kw">while</span>(remaining >= c) {
+      remaining -= c;
+      result.push(c);
+    }
+  }
+  <span class="kw">return</span> remaining===<span class="num">0</span> ? result : <span class="str">"Không thể đổi"</span>;
+}</pre>
+<h3>2. Chọn hoạt động</h3>
+<pre><span class="kw">function</span> <span class="fn">activitySelection</span>(acts) {
+  acts.sort((a,b) => a.end - b.end); <span class="cmt">// Sắp theo kết thúc</span>
+  <span class="kw">let</span> sel=[acts[<span class="num">0</span>]], lastEnd=acts[<span class="num">0</span>].end;
+  <span class="kw">for</span>(<span class="kw">let</span> i=<span class="num">1</span>; i&lt;acts.length; i++)
+    <span class="kw">if</span>(acts[i].start >= lastEnd) {
+      sel.push(acts[i]);
+      lastEnd = acts[i].end;
+    }
+  <span class="kw">return</span> sel;
+}</pre></div>
+<div class="interactive"><h3>🚀 Chạy thử Tham lam</h3>
+<div class="algo-select">
+<span class="algo-tag active" onclick="selAlgo(this,'greedy','coin')">Đổi tiền</span>
+<span class="algo-tag" onclick="selAlgo(this,'greedy','activity')">Chọn hoạt động</span>
+</div>
+<div class="input-group"><div><label id="greedy-label">Mệnh giá và số tiền (vd: 1,5,10,25;63):</label><input id="greedy-input" value="1,5,10,25;63" style="min-width:280px"></div>
+<button class="run-btn" onclick="runGreedy()">▶ Chạy ví dụ</button></div>
+<p class="hint">Đổi tiền: "1,5,10,25;63" | Chọn hoạt động: "1-3,2-5,4-7,6-9,8-10"</p>
+<div class="output" id="greedy-output">Nhấn "Chạy ví dụ" để xem kết quả...</div></div>`;
+
+// ===================== TRẠNG THÁI =====================
+let curAlgo = {rec:'factorial', dnc:'bsearch', dp:'fibdp', greedy:'coin'};
+
+// ===================== ĐIỀU HƯỚNG =====================
+function show(id) {
+  document.getElementById('mainContent').innerHTML = DATA[id] || DATA.welcome;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const idx = {welcome:0, recursion:1, dnc:2, dp:3, greedy:4}[id] || 0;
+  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+}
+
+function selAlgo(el, section, algo) {
+  curAlgo[section] = algo;
+  el.parentElement.querySelectorAll('.algo-tag').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ===================== ĐỆ QUY - XỬ LÝ =====================
+function factorial(n) { if(n===0) return 1; return n * factorial(n-1); }
+function fibonacci(n) { if(n<=1) return n; return fibonacci(n-1) + fibonacci(n-2); }
+function hanoiFn(n, from='A', to='C', aux='B') {
+  if(n===1) return 'Di chuyển đĩa 1: '+from+' → '+to+'\n';
+  let s = hanoiFn(n-1, from, aux, to);
+  s += 'Di chuyển đĩa '+n+': '+from+' → '+to+'\n';
+  s += hanoiFn(n-1, aux, to, from);
+  return s;
+}
+
+function runRec() {
+  const n = parseInt(document.getElementById('rec-input').value);
+  const out = document.getElementById('rec-output');
+  if(isNaN(n) || n<0 || n>20) { out.textContent='⚠ Vui lòng nhập số từ 0 đến 20.'; return; }
+  let r = '';
+  switch(curAlgo.rec) {
+    case 'factorial':
+      r = '📌 Tính giai thừa ' + n + '!\n\n';
+      r += 'Quá trình: ' + n + '!';
+      for(let i=n;i>=1;i--) r += ' = ' + i + (i>1?' × ':'');
+      r += '\n\n✅ Kết quả: ' + n + '! = ' + factorial(n);
+      break;
+    case 'fibonacci':
+      r = '📌 Fibonacci(' + n + ')\n\nDãy: ';
+      for(let i=0;i<=n;i++) r += fibonacci(i) + (i<n?', ':'');
+      r += '\n\n✅ Kết quả: F(' + n + ') = ' + fibonacci(n);
+      break;
+    case 'hanoi':
+      r = '📌 Tháp Hà Nội với ' + n + ' đĩa\nTổng bước: ' + (Math.pow(2,n)-1) + '\n\n' + hanoiFn(n);
+      break;
+  }
+  out.textContent = r;
+}
+
+// ===================== CHIA ĐỂ TRỊ - XỬ LÝ =====================
+function bsFunc(arr,t,lo=0,hi=arr.length-1) {
+  if(lo>hi) return -1;
+  let m=Math.floor((lo+hi)/2);
+  if(arr[m]===t) return m;
+  if(arr[m]<t) return bsFunc(arr,t,m+1,hi);
+  return bsFunc(arr,t,lo,m-1);
+}
+function msFunc(arr) {
+  if(arr.length<=1) return arr;
+  let m=Math.floor(arr.length/2);
+  let L=msFunc(arr.slice(0,m)), R=msFunc(arr.slice(m));
+  let res=[],i=0,j=0;
+  while(i<L.length&&j<R.length) res.push(L[i]<R[j]?L[i++]:R[j++]);
+  return res.concat(L.slice(i)).concat(R.slice(j));
+}
+function qsFunc(arr) {
+  if(arr.length<=1) return arr;
+  let p=arr[arr.length-1],l=[],r=[];
+  for(let i=0;i<arr.length-1;i++) arr[i]<p?l.push(arr[i]):r.push(arr[i]);
+  return [...qsFunc(l),p,...qsFunc(r)];
+}
+
+function runDnc() {
+  const inp = document.getElementById('dnc-input').value;
+  const out = document.getElementById('dnc-output');
+  try {
+    switch(curAlgo.dnc) {
+      case 'bsearch': {
+        let [a,t] = inp.split(';');
+        let arr = a.split(',').map(Number), target = Number(t);
+        let idx = bsFunc(arr, target);
+        out.textContent = '📌 Binary Search\nMảng: ['+arr.join(', ')+']\nTìm: '+target+'\n\n'+(idx>=0?'✅ Tìm thấy tại vị trí: '+idx+' (index từ 0)':'❌ Không tìm thấy');
+        break;
+      }
+      case 'msort': {
+        let arr = inp.split(',').map(Number);
+        out.textContent = '📌 Merge Sort\nMảng gốc:     ['+arr.join(', ')+']\nSau sắp xếp: ['+msFunc([...arr]).join(', ')+']';
+        break;
+      }
+      case 'qsort': {
+        let arr = inp.split(',').map(Number);
+        out.textContent = '📌 Quick Sort\nMảng gốc:     ['+arr.join(', ')+']\nSau sắp xếp: ['+qsFunc([...arr]).join(', ')+']';
+        break;
+      }
+    }
+  } catch(e) { out.textContent = '⚠ Dữ liệu không hợp lệ. Kiểm tra lại định dạng.'; }
+}
+
+// ===================== QUY HOẠCH ĐỘNG - XỬ LÝ =====================
+function fibDPFn(n) { let dp=[0,1]; for(let i=2;i<=n;i++) dp[i]=dp[i-1]+dp[i-2]; return dp; }
+function ksFn(W,wt,val) {
+  let n=wt.length;
+  let dp=Array.from({length:n+1},()=>Array(W+1).fill(0));
+  for(let i=1;i<=n;i++) for(let w=0;w<=W;w++) {
+    dp[i][w]=dp[i-1][w];
+    if(wt[i-1]<=w) dp[i][w]=Math.max(dp[i][w],dp[i-1][w-wt[i-1]]+val[i-1]);
+  }
+  return dp[n][W];
+}
+function lcsFn(a,b) {
+  let m=a.length,n=b.length;
+  let dp=Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  let seq='',ii=m,jj=n;
+  while(ii>0&&jj>0) {
+    if(a[ii-1]===b[jj-1]){seq=a[ii-1]+seq;ii--;jj--}
+    else if(dp[ii-1][jj]>dp[ii][jj-1])ii--;else jj--;
+  }
+  return {len:dp[m][n], seq:seq};
+}
+
+function runDp() {
+  const inp = document.getElementById('dp-input').value;
+  const out = document.getElementById('dp-output');
+  try {
+    switch(curAlgo.dp) {
+      case 'fibdp': {
+        let n=parseInt(inp); let dp=fibDPFn(n);
+        out.textContent='📌 Fibonacci DP (Bottom-up)\n\nBảng DP: ['+dp.join(', ')+']\n\n✅ F('+n+') = '+dp[n];
+        break;
+      }
+      case 'knapsack': {
+        let [W,wts,vals]=inp.split(';');
+        W=parseInt(W); let wt=wts.split(',').map(Number), val=vals.split(',').map(Number);
+        out.textContent='📌 Knapsack 0/1\nSức chứa W = '+W+'\nTrọng lượng: ['+wt.join(', ')+']\nGiá trị:     ['+val.join(', ')+']\n\n✅ Giá trị lớn nhất: '+ksFn(W,wt,val);
+        break;
+      }
+      case 'lcs': {
+        let [a,b]=inp.split(';'); let r=lcsFn(a,b);
+        out.textContent='📌 LCS - Dãy con chung dài nhất\nChuỗi A: "'+a+'"\nChuỗi B: "'+b+'"\n\n✅ Độ dài LCS: '+r.len+'\nDãy con chung: "'+r.seq+'"';
+        break;
+      }
+    }
+  } catch(e) { out.textContent = '⚠ Dữ liệu không hợp lệ. Kiểm tra lại định dạng.'; }
+}
+
+// ===================== THAM LAM - XỬ LÝ =====================
+function coinFn(coins,amount) {
+  coins.sort((a,b)=>b-a);
+  let res=[],rem=amount,steps=[];
+  for(let c of coins){let cnt=0;while(rem>=c){rem-=c;res.push(c);cnt++}if(cnt)steps.push(cnt+'×'+c)}
+  return rem===0?{coins:res,steps}:null;
+}
+function actFn(acts) {
+  acts.sort((a,b)=>a[1]-b[1]);
+  let sel=[acts[0]],last=acts[0][1];
+  for(let i=1;i<acts.length;i++) if(acts[i][0]>=last){sel.push(acts[i]);last=acts[i][1]}
+  return sel;
+}
+
+function runGreedy() {
+  const inp = document.getElementById('greedy-input').value;
+  const out = document.getElementById('greedy-output');
+  try {
+    switch(curAlgo.greedy) {
+      case 'coin': {
+        let [cs,am]=inp.split(';');
+        let coins=cs.split(',').map(Number), amount=parseInt(am);
+        let r=coinFn([...coins],amount);
+        if(r) out.textContent='📌 Đổi tiền (Greedy)\nMệnh giá: ['+coins.join(', ')+']\nSố tiền: '+amount+'\n\n✅ Cách đổi: '+r.steps.join(' + ')+'\nTổng xu: '+r.coins.length+'\nChi tiết: ['+r.coins.join(', ')+']';
+        else out.textContent='❌ Không thể đổi số tiền '+amount;
+        break;
+      }
+      case 'activity': {
+        let acts=inp.split(',').map(s=>{let[a,b]=s.split('-').map(Number);return[a,b]});
+        let sel=actFn(acts);
+        out.textContent='📌 Chọn hoạt động (Activity Selection)\nTất cả: '+acts.map(a=>'['+a[0]+'-'+a[1]+']').join(', ')+'\n\n✅ Được chọn ('+sel.length+'):\n'+sel.map(a=>'  • Bắt đầu: '+a[0]+', Kết thúc: '+a[1]).join('\n');
+        break;
+      }
+    }
+  } catch(e) { out.textContent = '⚠ Dữ liệu không hợp lệ. Kiểm tra lại định dạng.'; }
+}
+
+// ===================== KHỞI TẠO =====================
+show('welcome');
+</script>
+</body>
+</html>
